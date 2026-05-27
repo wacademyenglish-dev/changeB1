@@ -1,0 +1,1113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>WOLF LABS | Zenith: Dealing with Change (B1)</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@300;400;500;600;700;800&family=Lora:ital,wght@0,400;0,500;0,600;1,400&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
+    <style>
+        /* === ZENITH: MINDFUL OS THEME (B1 PREMIUM) === */
+        :root {
+            --bg-base: #0f172a;       /* Deep Navy */
+            --bg-panel: #1e293b;      /* Soft Slate */
+            --accent-teal: #14b8a6;   /* Mindful Teal */
+            --accent-lavender: #a855f7; /* Calming Lavender */
+            --accent-rose: #f43f5e;   /* Alert Rose */
+            --accent-sand: #fde047;   /* Warm Sand */
+            --text-main: #f8fafc;     /* White/Slate */
+            --text-muted: #94a3b8;    /* Muted Slate */
+            --border-soft: rgba(255, 255, 255, 0.1);
+            --glow-teal: rgba(20, 184, 166, 0.4);
+            --glow-lavender: rgba(168, 85, 247, 0.4);
+        }
+
+        body { 
+            font-family: 'Nunito', sans-serif; 
+            background-color: var(--bg-base);
+            color: var(--text-main);
+            overflow: hidden;
+            -webkit-tap-highlight-color: transparent;
+            background-image: 
+                radial-gradient(circle at 15% 0%, rgba(20, 184, 166, 0.05), transparent 40%),
+                radial-gradient(circle at 85% 100%, rgba(168, 85, 247, 0.05), transparent 40%);
+        }
+
+        .font-serif-ui { font-family: 'Lora', serif; }
+        .font-mono-ui { font-family: 'JetBrains Mono', monospace; }
+
+        /* PANELS & CARDS */
+        .zen-panel {
+            background: rgba(30, 41, 59, 0.65);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--border-soft);
+            border-radius: 24px;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.5), inset 0 0 20px rgba(255, 255, 255, 0.02);
+        }
+
+        /* HUD TOP */
+        #hud-top {
+            position: fixed; top: 0; left: 0; right: 0; padding: 15px 30px;
+            z-index: 1000; border-bottom: 1px solid var(--border-soft);
+            background: rgba(15, 23, 42, 0.85); backdrop-filter: blur(12px);
+            box-shadow: 0 4px 30px rgba(0,0,0,0.6);
+        }
+        .hud-bar-container { width: 140px; height: 6px; background: rgba(255,255,255,0.05); overflow: hidden; border-radius: 4px; border: 1px solid rgba(255,255,255,0.1);}
+        .hud-bar-fill { height: 100%; transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1); box-shadow: 0 0 12px currentColor;}
+
+        /* CONTENT ARENA */
+        #mission-arena { height: 100vh; padding-bottom: 100px; padding-top: 80px; overflow-y: auto; scroll-behavior: smooth;}
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.2); border-radius: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+
+        /* BUTTONS */
+        .btn-zen {
+            background: linear-gradient(135deg, var(--accent-teal), #0d9488); color: #fff; border-radius: 12px;
+            font-family: 'Nunito', sans-serif; font-weight: 700; text-transform: uppercase; letter-spacing: 1px;
+            transition: all 0.3s ease; border: none; cursor: pointer; padding: 16px 36px;
+            box-shadow: 0 8px 25px var(--glow-teal);
+        }
+        .btn-zen:hover { transform: translateY(-3px); box-shadow: 0 12px 35px var(--glow-teal); filter: brightness(1.1); }
+        .btn-zen:active { transform: scale(0.97); }
+
+        /* SLIDER */
+        input[type=range].zen-slider { -webkit-appearance: none; width: 100%; background: transparent; }
+        input[type=range].zen-slider:focus { outline: none; }
+        input[type=range].zen-slider::-webkit-slider-runnable-track { width: 100%; height: 6px; cursor: pointer; background: rgba(255,255,255,0.1); border-radius: 3px; }
+        input[type=range].zen-slider::-webkit-slider-thumb { -webkit-appearance: none; height: 28px; width: 28px; border-radius: 50%; background: var(--text-main); cursor: pointer; margin-top: -11px; box-shadow: 0 0 20px rgba(20,184,166,0.6); transition: 0.2s; border: 4px solid var(--accent-teal);}
+        input[type=range].zen-slider::-webkit-slider-thumb:hover { transform: scale(1.2); }
+
+        /* VOCAB DRAG (Definitions) */
+        .drag-word { background: var(--bg-panel); color: var(--text-main); padding: 14px 28px; border-radius: 12px; border: 1px solid var(--border-soft); cursor: grab; font-weight: 700; display: inline-flex; align-items: center; box-shadow: 0 8px 20px rgba(0,0,0,0.3); transition: 0.2s; font-size: 1.1rem; letter-spacing: 0.5px;}
+        .drag-word:hover { transform: translateY(-3px); border-color: var(--accent-teal); color: var(--accent-teal); background: var(--bg-base); }
+        .drag-word.dragging { opacity: 0.5; transform: scale(1.05); }
+        
+        .def-drop-zone { background: rgba(0,0,0,0.3); border: 2px dashed var(--text-muted); border-radius: 20px; padding: 25px; display: flex; flex-direction: column; justify-content: space-between; min-height: 180px; transition: 0.3s; box-shadow: inset 0 0 30px rgba(0,0,0,0.3);}
+        .def-drop-zone.drag-over { background: rgba(20,184,166,0.1); border-color: var(--accent-teal); transform: scale(1.02);}
+        .def-drop-area { min-height: 60px; background: rgba(0,0,0,0.4); border-radius: 12px; display: flex; align-items: center; justify-content: center; margin-top: 20px; border: 1px solid transparent; transition: 0.3s;}
+
+        /* VIDEO */
+        .video-container { width: 100%; max-width: 900px; aspect-ratio: 16/9; background: #000; border-radius: 20px; overflow: hidden; border: 1px solid var(--border-soft); box-shadow: 0 25px 60px rgba(0,0,0,0.8), 0 0 40px rgba(20,184,166,0.15); position: relative; }
+        .video-container iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none; }
+
+        /* BUCKET SORT (Mindful Categories) */
+        .bucket-zone { background: rgba(0, 0, 0, 0.3); border: 2px dashed var(--text-muted); border-radius: 24px; min-height: 240px; padding: 25px; display: flex; flex-direction: column; align-items: center; transition: 0.3s; box-shadow: inset 0 0 40px rgba(0,0,0,0.4); }
+        .bucket-zone h3 { font-family: 'Lora', serif; font-size: 2rem; font-weight: 500; color: var(--text-main); margin-bottom: 20px; width: 100%; text-align: center; border-bottom: 1px solid var(--border-soft); padding-bottom: 15px;}
+        .bucket-zone.drag-over { background: rgba(253, 224, 71, 0.05); border-color: var(--accent-sand); }
+        .bucket-items { display: flex; flex-wrap: wrap; gap: 12px; justify-content: center; width: 100%;}
+        .sort-pill { background: var(--bg-panel); border: 1px solid var(--border-soft); padding: 12px 24px; border-radius: 30px; font-weight: 600; cursor: grab; font-size: 1.1rem; box-shadow: 0 4px 10px rgba(0,0,0,0.3);}
+        .sort-pill.dropped { background: var(--accent-sand); color: #1e293b; border: none; font-weight: 800; cursor: default; pointer-events: none; animation: popIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; box-shadow: 0 4px 20px rgba(253,224,71,0.4);}
+
+        /* FLIP CARDS */
+        .flip-card { perspective: 1000px; cursor: pointer; height: 300px; }
+        .flip-inner { position: relative; width: 100%; height: 100%; text-align: center; transition: transform 0.7s cubic-bezier(0.4, 0, 0.2, 1); transform-style: preserve-3d; }
+        .flip-card.flipped .flip-inner { transform: rotateY(180deg); }
+        .flip-front, .flip-back {
+            position: absolute; width: 100%; height: 100%; backface-visibility: hidden; border-radius: 20px;
+            display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 2rem;
+            background: var(--bg-panel); border: 1px solid var(--border-soft); box-shadow: 0 15px 40px rgba(0,0,0,0.5);
+        }
+        .flip-front { border-top: 4px solid var(--accent-lavender); }
+        .flip-back { background: rgba(15, 23, 42, 0.95); transform: rotateY(180deg); border-bottom: 4px solid var(--accent-teal); }
+
+        /* TUNER (Mindful Adjust) */
+        .tuner-track { width: 80px; height: 40px; background: rgba(0,0,0,0.6); border-radius: 20px; position: relative; cursor: pointer; border: 1px solid var(--border-soft); transition: 0.3s; box-shadow: inset 0 2px 10px rgba(0,0,0,0.6);}
+        .tuner-knob { width: 30px; height: 30px; background: var(--text-muted); border-radius: 50%; position: absolute; top: 4px; left: 5px; transition: 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55); box-shadow: 0 2px 5px rgba(0,0,0,0.5);}
+        .tuner-track.active { border-color: var(--accent-teal); background: rgba(20,184,166,0.2);}
+        .tuner-track.active .tuner-knob { transform: translateX(38px); background: var(--accent-teal); box-shadow: 0 0 15px var(--accent-teal);}
+
+        /* LOGIC GATE (Connections) */
+        .logic-node { background: rgba(0,0,0,0.3); border: 1px solid var(--border-soft); color: var(--text-main); padding: 1.8rem; border-radius: 16px; font-weight: 500; font-size: 1.2rem; cursor: pointer; transition: all 0.2s; box-shadow: 0 4px 15px rgba(0,0,0,0.3); text-align: center; backdrop-filter: blur(10px);}
+        .logic-node:hover:not(.matched) { border-color: var(--accent-lavender); transform: translateY(-3px); background: rgba(168,85,247,0.1); box-shadow: 0 10px 25px rgba(168,85,247,0.2);}
+        .logic-node.active { border-color: var(--accent-teal); background: rgba(20,184,166,0.15); box-shadow: 0 0 25px rgba(20,184,166,0.3); color: var(--accent-teal);}
+        .logic-node.matched { background: transparent; color: rgba(255,255,255,0.2); border-color: transparent; pointer-events: none; box-shadow: none;}
+
+        /* REDACTED (Journal Gap Fill) */
+        .gap-input { background: transparent; border-bottom: 2px dashed var(--text-muted); color: var(--accent-sand); width: auto; min-width: 80px; text-align: center; font-weight: 600; font-size: 2rem; font-family: 'Lora', serif; transition: 0.3s; padding: 0 10px; letter-spacing: 1px;}
+        .gap-input:focus { outline: none; border-bottom-color: var(--accent-sand); border-bottom-style: solid; background: rgba(253,224,71,0.05);}
+        .gap-input.correct { border-bottom-color: var(--accent-teal); border-bottom-style: solid; color: var(--accent-teal); pointer-events: none; text-shadow: 0 0 15px rgba(20,184,166,0.5);}
+        .gap-input.error { border-bottom-color: var(--accent-rose); color: var(--accent-rose); animation: shake 0.4s; }
+
+        /* SPELL CASTING (Word Builder) */
+        .build-pill { background: var(--bg-panel); border: 1px solid var(--border-soft); color: #fff; padding: 14px 28px; font-weight: 600; font-size: 1.2rem; border-radius: 12px; cursor: pointer; transition: all 0.2s; box-shadow: 0 4px 15px rgba(0,0,0,0.3); }
+        .build-pill:hover { border-color: var(--accent-teal); background: rgba(20,184,166,0.1); transform: translateY(-3px); }
+        .build-pill.used { opacity: 0; pointer-events: none; transform: scale(0.8); }
+
+        /* MULTIPLE CHOICE (Quiz) */
+        .mc-btn { background: rgba(0,0,0,0.3); border: 1px solid var(--border-soft); color: var(--text-main); font-family: 'Nunito', sans-serif; backdrop-filter: blur(10px);}
+        .mc-btn:hover { background: rgba(20,184,166,0.1); border-color: var(--accent-teal); transform: translateY(-3px); box-shadow: 0 15px 30px rgba(0,0,0,0.4); color: var(--text-main);}
+
+        /* GPT CHAT SIMULATOR */
+        .chat-container { width: 100%; max-width: 850px; height: 450px; background: rgba(0,0,0,0.4); border: 1px solid var(--border-soft); border-radius: 24px; overflow-y: auto; padding: 30px; display: flex; flex-direction: column; gap: 20px; box-shadow: inset 0 0 40px rgba(0,0,0,0.5);}
+        .chat-msg { max-width: 80%; padding: 18px 26px; border-radius: 20px; font-size: 1.2rem; line-height: 1.6; animation: popIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; opacity: 0; transform: scale(0.95) translateY(10px);}
+        .chat-msg.user { align-self: flex-end; background: rgba(20,184,166,0.15); color: #fff; border-bottom-right-radius: 4px; border: 1px solid rgba(20,184,166,0.3); box-shadow: 0 10px 25px rgba(20,184,166,0.15);}
+        .chat-msg.ai { align-self: flex-start; background: var(--bg-panel); border: 1px solid var(--border-soft); color: var(--text-main); border-bottom-left-radius: 4px; box-shadow: 0 10px 25px rgba(0,0,0,0.3);}
+        .typing-indicator { display: flex; gap: 6px; padding: 8px; align-items: center; height: 30px;}
+        .typing-dot { width: 8px; height: 8px; background: var(--text-muted); border-radius: 50%; animation: typeBounce 1.4s infinite ease-in-out both; }
+        .typing-dot:nth-child(1) { animation-delay: -0.32s; }
+        .typing-dot:nth-child(2) { animation-delay: -0.16s; }
+
+        /* PROFILE BUILDER */
+        .profile-input { width: 100%; background: rgba(0,0,0,0.3); border: 1px solid var(--border-soft); border-radius: 12px; padding: 16px 20px; font-size: 1.3rem; color: var(--accent-sand); margin-bottom: 20px; transition: 0.3s; font-family: 'Lora', serif; box-shadow: inset 0 2px 10px rgba(0,0,0,0.3);}
+        .profile-input:focus { outline: none; border-color: var(--accent-sand); background: rgba(0,0,0,0.5); box-shadow: 0 0 20px rgba(253,224,71,0.15);}
+        .profile-input::placeholder { color: rgba(255,255,255,0.2); font-family: 'Nunito', sans-serif; font-size: 1.1rem; font-weight: 300;}
+        
+        .zen-card-res { background: linear-gradient(135deg, rgba(30,41,59,0.9), rgba(15,23,42,0.95)); border: 1px solid var(--accent-teal); border-radius: 24px; padding: 40px; box-shadow: 0 25px 60px rgba(0,0,0,0.8); position: relative; overflow: hidden; backdrop-filter: blur(20px);}
+
+        /* FOOTER CONSOLE */
+        #nav-console {
+            position: fixed; bottom: 0; left: 0; width: 100%; height: 80px;
+            background: rgba(15, 23, 42, 0.95); border-top: 1px solid var(--border-soft);
+            display: flex; justify-content: space-between; align-items: center; padding: 0 30px; z-index: 5000; backdrop-filter: blur(15px);
+        }
+        
+        /* DRAWERS */
+        .drawer { background: rgba(30, 41, 59, 0.95); backdrop-filter: blur(20px); border-left: 1px solid var(--border-soft); transform: translateX(100%); transition: transform 0.4s cubic-bezier(0.25, 1, 0.5, 1); z-index: 5100; box-shadow: -20px 0 50px rgba(0,0,0,0.8);}
+        .drawer.active { transform: translateX(0); }
+
+        /* EFFECTS */
+        .fade-in { animation: fadeIn 0.6s ease forwards; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes popIn { 0% { transform: scale(0.8); opacity: 0;} 100% { transform: scale(1); opacity: 1;} }
+        @keyframes typeBounce { 0%, 80%, 100% { transform: scale(0); } 40% { transform: scale(1); } }
+        @keyframes shake { 10%, 90% { transform: translate3d(-2px, 0, 0); } 20%, 80% { transform: translate3d(4px, 0, 0); } 30%, 50%, 70% { transform: translate3d(-6px, 0, 0); } 40%, 60% { transform: translate3d(6px, 0, 0); } }
+    </style>
+</head>
+<body class="flex flex-col h-screen text-base">
+
+    <!-- Confetti Canvas -->
+    <canvas id="confetti-canvas" class="fixed inset-0 pointer-events-none z-[9999]"></canvas>
+
+    <!-- HUD SUPERIOR -->
+    <div id="hud-top" class="hidden justify-between items-center w-full">
+        <div class="flex items-center gap-8">
+            <div class="flex flex-col gap-1.5">
+                <span class="text-[10px] font-bold text-[var(--text-muted)] uppercase tracking-widest font-mono-ui">Peace of Mind (HP)</span>
+                <div class="hud-bar-container"><div id="hp-bar" class="hud-bar-fill bg-[var(--accent-teal)]" style="width: 100%;"></div></div>
+            </div>
+            <div class="flex flex-col gap-1.5">
+                <span class="text-[10px] font-bold text-[var(--text-muted)] uppercase tracking-widest font-mono-ui">Clarity (XP)</span>
+                <div class="hud-bar-container"><div id="xp-bar" class="hud-bar-fill bg-[var(--accent-lavender)]" style="width: 0%;"></div></div>
+            </div>
+        </div>
+        <div class="text-right flex items-center gap-6">
+            <button onclick="toggleTeacherHUD()" class="px-5 py-2 bg-white/5 border border-white/10 rounded-lg text-xs font-mono-ui font-bold text-[var(--text-muted)] hover:bg-[var(--accent-teal)] hover:text-black hover:border-transparent transition shadow-sm tracking-widest uppercase"><i class="fas fa-spa mr-2"></i>Coach HUD</button>
+            <div class="border-l border-[var(--border-soft)] pl-6 ml-2 hidden md:block">
+                <p class="font-serif-ui text-xl font-bold text-white tracking-widest uppercase leading-none">WOLF LABS</p>
+                <p class="text-[10px] font-bold text-[var(--accent-teal)] tracking-[0.2em] uppercase mt-1.5 font-mono-ui">B1 Intermediate</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- PAINEL PRINCIPAL (CAPA) -->
+    <main id="dashboard" class="flex flex-col items-center justify-center px-8 md:px-20 h-screen w-full relative z-10 bg-cover bg-center" style="background-image: url('https://images.unsplash.com/photo-1506126613408-eca07ce68773?q=80&w=1920');">
+        <!-- Overlay -->
+        <div class="absolute inset-0 bg-gradient-to-r from-[#0f172a] via-[#0f172a]/90 to-transparent"></div>
+        
+        <div class="relative z-20 max-w-4xl self-start md:mt-0 mt-20">
+            <div class="flex gap-4 mb-8">
+                <span class="bg-[var(--accent-teal)] text-black px-5 py-2 font-bold text-xs tracking-widest rounded-sm uppercase font-mono-ui shadow-md">B1 Level</span>
+                <span class="bg-black/40 border border-[var(--accent-teal)] text-[var(--accent-teal)] px-5 py-2 font-bold text-xs tracking-widest rounded-sm uppercase font-mono-ui backdrop-blur-md">Wellness Protocol</span>
+            </div>
+            
+            <h1 class="text-6xl md:text-8xl font-black text-white leading-tight font-serif-ui uppercase mb-6 drop-shadow-2xl" style="text-shadow: 0 10px 30px rgba(0,0,0,0.8);">
+                Zenith: <br><span class="text-[var(--accent-teal)]">Change</span>
+            </h1>
+            
+            <p class="text-2xl text-slate-300 font-light max-w-2xl leading-relaxed mb-12 drop-shadow-lg">
+                Change is constant. Learn how to talk about past habits with <strong class="text-white font-bold border-b-2 border-[var(--accent-teal)] pb-1">"Used to"</strong> and give advice using <strong class="text-white font-bold border-b-2 border-[var(--accent-teal)] pb-1">"Should"</strong>.
+            </p>
+            
+            <button onclick="startMission()" class="btn-zen text-xl px-14 py-5 shadow-[0_10px_40px_rgba(20,184,166,0.4)] rounded-full">
+                Begin Session <i class="fas fa-leaf ml-3"></i>
+            </button>
+        </div>
+    </main>
+
+    <!-- ARENA DE CONTEÚDO DA LIÇÃO -->
+    <main id="mission-arena" class="hidden flex-grow flex-col relative mt-[70px]">
+        <div id="mission-content" class="flex-grow overflow-y-auto px-4 md:px-6 py-12 flex flex-col items-center w-full relative z-20"></div>
+    </main>
+
+    <!-- CONSOLA DE NAVEGAÇÃO -->
+    <footer id="nav-console" class="hidden flex justify-between items-center w-full">
+        <div class="flex items-center w-1/4">
+            <button onclick="goHome()" class="text-slate-400 hover:text-[var(--accent-rose)] transition-colors p-3 rounded-full hover:bg-white/5" title="End Session"><i class="fas fa-power-off text-2xl"></i></button>
+        </div>
+        <div class="flex items-center gap-10 justify-center w-1/2">
+            <button onclick="prevStep()" class="text-slate-400 hover:text-white transition-colors p-2"><i class="fas fa-chevron-left text-2xl"></i></button>
+            <div class="bg-black/60 px-8 py-3 rounded-full border border-[var(--border-soft)] shadow-inner">
+                <span id="console-counter" class="text-xs font-bold text-[var(--accent-teal)] tracking-[0.3em] uppercase font-mono-ui">MODULE 01/25</span>
+            </div>
+            <button onclick="nextStep()" class="text-slate-400 hover:text-white transition-colors p-2"><i class="fas fa-chevron-right text-2xl"></i></button>
+        </div>
+        <div class="flex items-center justify-end gap-6 w-1/4">
+            <button onclick="toggleWhiteboard()" class="text-slate-400 hover:text-white transition-colors p-3 rounded-full hover:bg-white/5" title="Hypothesis Pad"><i class="fas fa-pen-nib text-xl"></i></button>
+        </div>
+    </footer>
+
+    <!-- DRAWERS -->
+    <aside id="whiteboard" class="fixed right-0 top-0 h-screen w-[420px] drawer flex flex-col pt-[70px]">
+        <div class="p-8 border-b border-[var(--border-soft)] flex justify-between items-center bg-black/20">
+            <h2 class="font-serif-ui text-xl font-bold text-[var(--text-main)] uppercase tracking-widest"><i class="fas fa-pen-nib mr-3 opacity-70"></i> Session Notes</h2>
+            <button onclick="toggleWhiteboard()" class="text-[var(--text-muted)] hover:text-white w-10 h-10 flex items-center justify-center rounded-full hover:bg-white/10 transition"><i class="fas fa-times text-xl"></i></button>
+        </div>
+        <textarea id="wb-text" class="flex-grow bg-transparent text-[var(--accent-sand)] p-8 resize-none focus:outline-none font-mono-ui text-lg leading-relaxed" placeholder="> Write your thoughts here..."></textarea>
+    </aside>
+
+    <aside id="teacher-hud" class="fixed right-0 top-0 h-screen w-[400px] drawer flex flex-col pt-[70px]">
+        <div class="p-8 border-b border-[var(--border-soft)] flex justify-between items-center bg-black/20">
+            <h2 class="font-serif-ui text-xl font-bold text-[var(--accent-teal)] uppercase tracking-widest"><i class="fas fa-spa mr-3"></i>Coach HUD</h2>
+            <button onclick="toggleTeacherHUD()"><i class="fas fa-times text-xl text-slate-400 hover:text-white w-10 h-10 flex items-center justify-center rounded-full hover:bg-white/10 transition"></i></button>
+        </div>
+        <div class="flex-grow overflow-y-auto p-8 space-y-10 bg-black/10">
+            <div class="bg-black/30 p-8 rounded-2xl border border-[var(--border-soft)] shadow-inner">
+                <p class="text-[11px] font-bold text-[var(--text-muted)] uppercase tracking-[0.2em] mb-4 font-mono-ui">Lesson Goal</p>
+                <p class="text-[15px] text-slate-200 leading-relaxed font-light">Level B1. Discussing life transitions. Grammar: 'Used to' (past habits) & Modals for Advice (Should, Ought to). Vocab: Coping, Stress, Vent.</p>
+            </div>
+            <div>
+                <p class="text-[11px] font-bold text-[var(--text-muted)] uppercase tracking-[0.2em] mb-5 font-mono-ui">Deploy Praise</p>
+                <div class="space-y-4">
+                    <button onclick="triggerPraise('MINDFUL GRAMMAR', 'Perfect Structure.')" class="w-full py-5 bg-[rgba(20,184,166,0.1)] text-[var(--accent-teal)] border border-[var(--accent-teal)] rounded-xl font-bold text-xs hover:bg-[var(--accent-teal)] hover:text-[#0f172a] transition-all uppercase tracking-widest font-mono-ui shadow-md">SEND: TEAL</button>
+                    <button onclick="triggerPraise('GREAT ADVICE', 'Excellent Speaking.')" class="w-full py-5 bg-[rgba(168,85,247,0.1)] text-[var(--accent-lavender)] border border-[var(--accent-lavender)] rounded-xl font-bold text-xs hover:bg-[var(--accent-lavender)] hover:text-white transition-all uppercase tracking-widest font-mono-ui shadow-md">SEND: PURPLE</button>
+                </div>
+            </div>
+        </div>
+    </aside>
+
+    <!-- Overlay de Elogio -->
+    <div id="praise-overlay" class="fixed inset-0 z-[6000] flex items-center justify-center bg-black/80 backdrop-blur-xl opacity-0 pointer-events-none transition-opacity duration-500 p-4">
+        <div id="praise-card" class="zen-panel p-16 text-center transform scale-50 transition-transform duration-700 cubic-bezier(0.175, 0.885, 0.32, 1.275) border-t-4 border-[var(--accent-teal)] rounded-[3rem] max-w-2xl w-full">
+            <div class="w-32 h-32 mx-auto rounded-full bg-black/50 flex items-center justify-center border border-[var(--border-soft)] mb-8 shadow-[0_0_50px_rgba(20,184,166,0.4)]">
+                <i id="praise-icon" class="fas fa-leaf text-7xl text-[var(--accent-teal)]"></i>
+            </div>
+            <h2 id="praise-main" class="font-serif-ui text-4xl md:text-5xl font-black tracking-tight uppercase mb-4 text-white"></h2>
+            <p id="praise-sub" class="text-base font-bold text-[var(--accent-lavender)] tracking-[0.3em] uppercase font-mono-ui"></p>
+        </div>
+    </div>
+
+    <!-- SCRIPT DO MOTOR PRINCIPAL -->
+    <script>
+        // Centralized shuffle
+        function shuffleArray(array) {
+            let curId = array.length; 
+            while (0 !== curId) { 
+                let randId = Math.floor(Math.random() * curId); 
+                curId -= 1; 
+                let tmp = array[curId]; 
+                array[curId] = array[randId]; 
+                array[randId] = tmp; 
+            } 
+            return array;
+        }
+
+        let state = { hp: 100, xp: 0, current: 0 };
+        const esc = (s) => s ? s.replace(/'/g, "\\'").replace(/"/g, "&quot;") : "";
+
+        // --- TEMPLATES B1 (ZENITH PREMIUM) ---
+        function step(title, html) { return { title, html }; }
+
+        const bGuide = (title, subtitle, points) => step(title, `
+            <div class="max-w-4xl mx-auto space-y-10 animate-in fade-in py-12 w-full">
+                <div class="zen-panel p-16 text-center rounded-[3rem] border-t-2 border-[var(--accent-teal)]">
+                    <p class="text-[var(--accent-teal)] font-semibold uppercase tracking-[0.4em] text-[12px] mb-6 font-mono-ui"><i class="fas fa-clipboard-list mr-2 opacity-80"></i> Protocol Briefing</p>
+                    <h2 class="font-serif-ui text-5xl md:text-6xl font-bold text-white mb-8 drop-shadow-md tracking-tight uppercase">${title}</h2>
+                    <p class="text-2xl text-[var(--text-muted)] mb-14 font-light tracking-wide italic font-serif-ui">"${subtitle}"</p>
+                    <div class="space-y-6 text-left max-w-xl mx-auto bg-black/30 p-10 rounded-2xl border border-[var(--border-soft)] shadow-inner">
+                        ${points.map(p => `<p class="text-xl text-[var(--text-main)] font-light flex items-start gap-5"><i class="fas fa-arrow-right text-[var(--accent-teal)] text-lg mt-1.5 opacity-80"></i> <span class="leading-relaxed">${p}</span></p>`).join('')}
+                    </div>
+                </div>
+            </div>
+        `);
+
+        const bSlider = (title, prompt, minL, maxL, followup, starter) => step(title, `
+            <div class="max-w-5xl mx-auto flex flex-col items-center justify-center min-h-[60vh] text-center animate-in fade-in w-full py-12">
+                <p class="text-[11px] font-bold text-[var(--accent-lavender)] uppercase tracking-[0.3em] mb-6 font-mono-ui bg-black/40 border border-[rgba(168,85,247,0.3)] px-6 py-2.5 rounded-full shadow-md"><i class="fas fa-sliders-h mr-2"></i> Initial Assessment</p>
+                <h2 class="font-serif-ui text-4xl md:text-6xl font-bold text-white mb-12 drop-shadow-md leading-tight">${prompt}</h2>
+                
+                <div class="w-full max-w-4xl zen-panel py-16 flex flex-col items-center mb-14 rounded-[2.5rem] relative overflow-hidden">
+                    <div class="text-6xl font-black text-[var(--accent-teal)] mb-10 font-mono-ui tracking-tighter drop-shadow-[0_0_15px_rgba(20,184,166,0.3)]" id="display-val">50%</div>
+                    <div class="w-full px-16 relative z-10">
+                        <input type="range" min="0" max="100" value="50" class="zen-slider" oninput="document.getElementById('display-val').innerText = this.value + '%'">
+                    </div>
+                    <div class="flex justify-between w-full px-16 mt-8 text-sm font-bold uppercase tracking-[0.2em] text-[var(--text-muted)] font-mono-ui">
+                        <span>${minL}</span><span>${maxL}</span>
+                    </div>
+                </div>
+
+                <div class="w-full max-w-4xl p-10 bg-black/40 border-l-4 border-[var(--accent-lavender)] rounded-2xl text-left shadow-2xl backdrop-blur-md">
+                    <p class="text-[11px] font-bold text-[var(--accent-lavender)] uppercase tracking-[0.3em] font-mono-ui mb-5"><i class="fas fa-comment-dots mr-2"></i> Coach Query</p>
+                    <p class="text-3xl text-white font-light font-serif-ui mb-6">"${followup}"</p>
+                    <div class="bg-black/50 p-6 rounded-xl border border-[var(--border-soft)]">
+                        <p class="text-xl text-[var(--text-main)] font-light italic font-serif-ui">"${starter} . . ."</p>
+                    </div>
+                </div>
+            </div>
+        `);
+
+        // NEW: bVocabDrag for Definitions
+        const bVocabDrag = (id, title, instruction, items, followupQuestion) => {
+            let words = shuffleArray([...items]).map(w => `
+                <div class="drag-word" draggable="true" ondragstart="dragDef(event, this)" ondragend="this.classList.remove('dragging')" data-word="${esc(w.word)}">
+                    <i class="fas fa-tag mr-3 opacity-40"></i>${w.word}
+                </div>
+            `).join('');
+
+            let dropzones = items.map((w) => `
+                <div class="def-drop-zone zen-panel" data-expected="${esc(w.word)}" ondrop="dropDef(event, this, '${id}')" ondragover="allowDropDef(event)" ondragleave="leaveDropDef(event)">
+                    <p class="text-[var(--text-main)] font-light text-xl leading-relaxed text-center font-serif-ui px-4">"${w.def}"</p>
+                    <div class="def-drop-area">
+                        <span class="text-xs font-mono-ui text-[var(--text-muted)] uppercase tracking-[0.2em] pointer-events-none">Drop Concept Here</span>
+                    </div>
+                </div>
+            `).join('');
+
+            return step(title, `
+                <div class="max-w-6xl mx-auto flex flex-col items-center py-10 animate-in fade-in w-full" id="vdrag-container-${id}">
+                    <p class="text-[11px] font-bold text-[var(--accent-teal)] uppercase tracking-[0.3em] mb-6 font-mono-ui bg-black/40 border border-[rgba(20,184,166,0.3)] px-6 py-2.5 rounded-full shadow-md"><i class="fas fa-book-open mr-2"></i> Terminology</p>
+                    <h2 class="font-serif-ui text-4xl md:text-5xl font-bold text-white mb-6 text-center drop-shadow-md uppercase tracking-tight">${title}</h2>
+                    <p class="text-[var(--text-muted)] text-xl font-light mb-12 text-center max-w-3xl">${instruction}</p>
+                    
+                    <div class="w-full max-w-5xl flex justify-center flex-wrap gap-5 mb-14 bg-black/30 p-10 rounded-3xl border border-[var(--border-soft)] shadow-inner" id="vdrag-bank-${id}">
+                        ${words}
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8 w-full max-w-5xl" id="vdrag-grid-${id}">
+                        ${dropzones}
+                    </div>
+                    
+                    <div id="vdrag-fb-${id}" class="hidden w-full max-w-5xl p-10 mt-14 bg-black/50 border-l-4 border-[var(--accent-teal)] rounded-2xl text-left shadow-2xl animate-in fade-in backdrop-blur-md">
+                        <p class="text-[11px] font-bold text-[var(--accent-teal)] uppercase tracking-[0.3em] font-mono-ui mb-5"><i class="fas fa-comment-dots mr-2"></i> Coach Query</p>
+                        <p class="text-3xl text-white font-light italic font-serif-ui">"${followupQuestion}"</p>
+                    </div>
+                </div>
+            `);
+        };
+
+        const bVideo = (title, instruction, videoId, start, end) => {
+            const timeParams = (start !== undefined && end !== undefined) ? `&start=${start}&end=${end}` : '';
+            return step(title, `
+            <div class="max-w-5xl mx-auto flex flex-col items-center justify-center min-h-[70vh] py-12 animate-in fade-in w-full">
+                <p class="text-[11px] font-bold text-[var(--accent-lavender)] uppercase tracking-[0.3em] mb-6 font-mono-ui bg-black/40 border border-[rgba(168,85,247,0.3)] px-6 py-2.5 rounded-full shadow-md flex items-center gap-2"><div class="w-2 h-2 bg-[var(--accent-lavender)] rounded-full animate-pulse"></div> AWARENESS FEED</p>
+                <h2 class="font-serif-ui text-4xl md:text-6xl font-black text-white mb-8 text-center drop-shadow-lg uppercase tracking-tight">${title}</h2>
+                <p class="text-xl text-[var(--text-muted)] font-light mb-12 text-center max-w-3xl">${instruction}</p>
+                
+                <div class="video-container rounded-3xl shadow-[0_20px_60px_rgba(0,0,0,0.8)] border border-[var(--border-soft)]">
+                    <iframe src="https://www.youtube.com/embed/${videoId}?rel=0&modestbranding=1${timeParams}" allowfullscreen></iframe>
+                </div>
+            </div>
+        `);
+        };
+
+        const bFlipCards = (title, instruction, cards, followUpQuestion) => step(title, `
+            <div class="max-w-6xl mx-auto flex flex-col items-center py-12 animate-in fade-in w-full">
+                <p class="text-[11px] font-bold text-[var(--accent-lavender)] uppercase tracking-[0.3em] mb-6 font-mono-ui bg-black/40 border border-[rgba(168,85,247,0.3)] px-6 py-2.5 rounded-full shadow-md">Concepts</p>
+                <h2 class="font-serif-ui text-4xl md:text-5xl font-bold text-white mb-8 text-center drop-shadow-md uppercase tracking-tight">${title}</h2>
+                <p class="text-[var(--text-muted)] text-xl font-light mb-14 text-center max-w-3xl">${instruction}</p>
+                
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-10 w-full max-w-5xl mb-14">
+                    ${cards.map(card => `
+                        <div class="flip-card w-full h-[320px]" onclick="this.classList.toggle('flipped')">
+                            <div class="flip-inner">
+                                <div class="flip-front rounded-3xl p-10">
+                                    <div class="w-24 h-24 rounded-full bg-black/40 mb-8 flex items-center justify-center border border-[var(--accent-lavender)] shadow-[0_0_20px_rgba(168,85,247,0.2)]"><i class="fas ${card.icon} text-4xl text-[var(--accent-lavender)] opacity-80"></i></div>
+                                    <p class="font-serif-ui text-white text-3xl font-bold mb-3">${card.title}</p>
+                                    <p class="text-[10px] text-[var(--text-muted)] mt-auto font-mono-ui uppercase tracking-[0.2em] font-bold">Tap to Reveal</p>
+                                </div>
+                                <div class="flip-back rounded-3xl p-10 flex flex-col justify-center">
+                                    <div class="w-full">
+                                        <p class="text-3xl font-bold text-[var(--accent-lavender)] mb-6 border-b border-[var(--border-soft)] pb-4 inline-block font-serif-ui">${card.name}</p>
+                                        <p class="text-xl text-[var(--text-main)] font-light leading-relaxed px-2 font-serif-ui">"${card.desc}"</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    `).join('')}
+                </div>
+                
+                <div class="w-full max-w-5xl p-10 bg-black/50 border-l-4 border-[var(--accent-lavender)] rounded-2xl text-left shadow-2xl backdrop-blur-md">
+                    <p class="text-[11px] font-bold text-[var(--accent-lavender)] uppercase tracking-[0.3em] font-mono-ui mb-5"><i class="fas fa-comment-dots mr-2"></i> Coach Query</p>
+                    <p class="text-3xl text-white font-light italic font-serif-ui">"${followUpQuestion}"</p>
+                </div>
+            </div>
+        `);
+
+        // NEW: bTagAssign (Hashtag / Label Assignment)
+        const bTagAssign = (id, title, instruction, contextText, tags, correctTag, followup) => {
+            let tagBtns = shuffleArray([...tags]).map(t => `
+                <button class="px-8 py-4 rounded-full border border-[var(--border-soft)] bg-[var(--bg-panel)] hover:bg-[var(--bg-base)] hover:border-[var(--accent-lavender)] text-white font-bold transition-all shadow-md font-mono-ui uppercase tracking-[0.2em] text-sm" onclick="selectTag(this, '${id}', '${esc(t)}', '${esc(correctTag)}')">#${t}</button>
+            `).join('');
+
+            return step(title, `
+                <div class="max-w-5xl mx-auto flex flex-col items-center py-12 animate-in fade-in w-full min-h-[60vh] justify-center">
+                    <p class="text-[11px] font-bold text-[var(--accent-lavender)] uppercase tracking-[0.3em] mb-6 font-mono-ui bg-black/40 border border-[rgba(168,85,247,0.3)] px-6 py-2.5 rounded-full shadow-md"><i class="fas fa-hashtag mr-2"></i> Empathy Scan</p>
+                    <h2 class="font-serif-ui text-4xl md:text-5xl font-bold text-white mb-8 text-center drop-shadow-md uppercase tracking-tight">${title}</h2>
+                    <p class="text-[var(--text-muted)] text-xl font-light mb-12 text-center max-w-2xl">${instruction}</p>
+                    
+                    <div class="w-full max-w-4xl zen-panel p-14 text-center mb-12 rounded-[2.5rem] shadow-[0_20px_50px_rgba(0,0,0,0.4)]">
+                        <i class="fas fa-quote-left text-5xl text-[var(--accent-lavender)] opacity-20 mb-8 block"></i>
+                        <p class="text-3xl font-serif-ui text-[var(--text-main)] font-light leading-relaxed px-6">"${contextText}"</p>
+                    </div>
+
+                    <div class="flex flex-wrap justify-center gap-6 w-full max-w-4xl" id="tag-group-${id}">
+                        ${tagBtns}
+                    </div>
+
+                    <div id="tag-fb-${id}" class="hidden w-full max-w-4xl p-10 mt-14 bg-black/50 border-l-4 border-[var(--accent-lavender)] rounded-2xl text-left shadow-2xl animate-in fade-in backdrop-blur-md">
+                        <p class="text-[11px] font-bold text-[var(--accent-lavender)] uppercase tracking-[0.3em] font-mono-ui mb-5"><i class="fas fa-comment-dots mr-2"></i> Coach Query</p>
+                        <p class="text-3xl text-white font-light italic font-serif-ui">"${followup}"</p>
+                    </div>
+                </div>
+            `);
+        };
+
+        const bGrammar = (title, subtitle, rule, examples) => step(title, `
+            <div class="max-w-5xl mx-auto space-y-12 animate-in fade-in py-12 w-full">
+                <div class="text-center space-y-6 mb-16">
+                    <p class="text-[11px] font-bold text-[var(--accent-teal)] uppercase tracking-[0.3em] mb-4 font-mono-ui bg-[rgba(20,184,166,0.1)] inline-block px-6 py-2.5 rounded-full border border-[rgba(20,184,166,0.3)] shadow-sm">Grammar Structure</p>
+                    <h2 class="font-serif-ui text-5xl md:text-6xl font-black text-white drop-shadow-md tracking-tight uppercase">${title}</h2>
+                    <p class="text-xl text-[var(--text-muted)] font-light max-w-2xl mx-auto">${subtitle}</p>
+                </div>
+                
+                <div class="zen-panel p-12 text-center border-t-4 border-[var(--accent-teal)] rounded-[2.5rem] shadow-2xl">
+                    <p class="font-mono-ui text-3xl text-[var(--accent-sand)] font-bold tracking-widest uppercase">${rule}</p>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-10 mt-14">
+                    ${examples.map(ex => `
+                        <div class="bg-black/30 border border-[var(--border-soft)] p-10 rounded-3xl text-center shadow-lg backdrop-blur-sm">
+                            <p class="text-2xl font-light text-[var(--text-main)] leading-relaxed font-serif-ui">"${ex.replace(/\[(.*?)\]/g, `<span class="text-[var(--accent-teal)] font-bold bg-[rgba(20,184,166,0.15)] px-3 py-1 rounded-lg border border-[var(--accent-teal)]/30 mx-1">$1</span>`)}"</p>
+                        </div>
+                    `).join('')}
+                </div>
+            </div>
+        `);
+
+        const bBucketSort = (id, title, instruction, items, buckets) => {
+            let pills = shuffleArray([...items]).map(item => `
+                <div class="sort-pill" draggable="true" ondragstart="dragBucket(event, this)" data-target="${item.target}">
+                    ${item.word}
+                </div>
+            `).join('');
+
+            let bucketHtml = buckets.map(b => `
+                <div class="bucket-zone w-full" data-bucket="${b}" ondrop="dropBucket(event, this, '${id}', ${items.length})" ondragover="allowDropBucket(event)" ondragleave="leaveDropBucket(event)">
+                    <h3>${b}</h3>
+                    <div class="bucket-items"></div>
+                </div>
+            `).join('');
+
+            return step(title, `
+                <div class="max-w-6xl mx-auto flex flex-col items-center py-12 animate-in fade-in w-full">
+                    <p class="text-[11px] font-bold text-[var(--accent-lavender)] uppercase tracking-[0.3em] mb-6 font-mono-ui bg-black/40 border border-[rgba(168,85,247,0.3)] px-6 py-2.5 rounded-full shadow-md"><i class="fas fa-layer-group mr-2"></i> Categorize</p>
+                    <h2 class="font-serif-ui text-4xl md:text-5xl font-bold text-white mb-6 text-center drop-shadow-md uppercase tracking-tight">${title}</h2>
+                    <p class="text-[var(--text-muted)] text-xl font-light mb-14 text-center max-w-2xl">${instruction}</p>
+                    
+                    <div class="w-full max-w-4xl flex justify-center flex-wrap gap-5 mb-14 bg-black/30 p-10 rounded-[2rem] border border-[var(--border-soft)] shadow-inner" id="bucket-bank-${id}">
+                        ${pills}
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-${buckets.length} gap-10 w-full max-w-4xl" id="bucket-grid-${id}">
+                        ${bucketHtml}
+                    </div>
+                    
+                    <div id="bucket-fb-${id}" class="hidden mt-12 text-[var(--bg-base)] font-bold text-sm bg-[var(--accent-teal)] border border-[var(--accent-teal)] px-8 py-4 rounded-full uppercase tracking-[0.2em] font-mono-ui shadow-[0_0_20px_rgba(20,184,166,0.4)]"><i class="fas fa-check-circle mr-2"></i> Sorted perfectly!</div>
+                </div>
+            `);
+        };
+
+        const bTuner = (id, title, instruction, wrong, right, rule) => step(title, `
+            <div class="max-w-5xl mx-auto flex flex-col items-center justify-center min-h-[60vh] text-center space-y-12 animate-in fade-in w-full py-12">
+                <p class="text-[11px] font-bold text-[var(--accent-teal)] uppercase tracking-[0.3em] mb-4 font-mono-ui bg-black/40 px-6 py-2.5 rounded-full border border-[rgba(20,184,166,0.3)] shadow-md"><i class="fas fa-sliders-h mr-2"></i> The Editor</p>
+                <h2 class="font-serif-ui text-4xl md:text-5xl font-bold text-white mb-6 drop-shadow-md uppercase tracking-tight">${title}</h2>
+                <p class="text-xl font-light text-[var(--text-muted)] max-w-2xl">${instruction}</p>
+                
+                <div class="w-full max-w-4xl zen-panel flex flex-col items-center py-20 mt-8 rounded-[3rem] shadow-2xl border-t-2 border-[var(--accent-teal)]">
+                    <div class="flex items-center gap-10 mb-16 w-full justify-center">
+                        <span class="font-bold text-slate-500 tracking-[0.2em] text-sm w-32 text-right uppercase font-mono-ui transition-opacity opacity-50" id="mode-aff-${id}">Error</span>
+                        <div class="tuner-track w-[90px] h-[46px] rounded-[23px] border-2" id="tuner-track-${id}" onclick="toggleTuner('${id}', '${esc(wrong)}', '${esc(right)}', '${esc(rule)}')">
+                            <div class="tuner-knob w-[34px] h-[34px] top-[4px] left-[5px]"></div>
+                        </div>
+                        <span class="font-bold text-slate-500 tracking-[0.2em] text-sm w-32 text-left uppercase font-mono-ui transition-opacity" id="mode-alt-${id}">Fix</span>
+                    </div>
+
+                    <div class="bg-black/40 w-full max-w-2xl p-12 flex items-center justify-center min-h-[180px] rounded-3xl border border-[var(--border-soft)] shadow-inner backdrop-blur-sm">
+                        <p id="tuner-text-${id}" class="text-4xl font-serif-ui font-light text-[var(--accent-rose)] transition-opacity duration-300 leading-relaxed tracking-wide">"${wrong.replace(/\[(.*?)\]/g, `<span class="border-b-2 border-[var(--accent-rose)]/50 pb-1">$1</span>`)}"</p>
+                    </div>
+                    
+                    <div id="tuner-fb-${id}" class="hidden mt-12 font-bold text-sm text-[var(--accent-teal)] font-mono-ui uppercase tracking-[0.2em]">
+                        <i class="fas fa-info-circle mr-2 text-lg"></i> ${rule}
+                    </div>
+                </div>
+            </div>
+        `);
+
+        const bLogicGate = (title, instruction, pairs) => {
+            let lefts = pairs.map((p, i) => ({text: p.left, id: i, type: 'L'}));
+            let rights = pairs.map((p, i) => ({text: p.right, id: i, type: 'R'}));
+            lefts = shuffleArray(lefts); rights = shuffleArray(rights);
+
+            const buildNodes = (arr) => arr.map(item => `
+                <div class="logic-node" data-id="${item.id}" data-type="${item.type}" onclick="handleMatch(this)">
+                    ${item.text}
+                </div>
+            `).join('');
+
+            return step(title, `
+                <div class="max-w-6xl mx-auto w-full flex flex-col items-center py-12 animate-in fade-in">
+                    <p class="text-[11px] font-bold text-[var(--accent-lavender)] uppercase tracking-[0.3em] mb-6 font-mono-ui bg-black/40 border border-[rgba(168,85,247,0.3)] px-6 py-2.5 rounded-full shadow-md"><i class="fas fa-link mr-2"></i> Connections</p>
+                    <h2 class="font-serif-ui text-4xl md:text-5xl font-bold text-white mb-6 text-center drop-shadow-md uppercase tracking-tight">${title}</h2>
+                    <p class="text-[var(--text-muted)] font-light text-xl mb-14 text-center max-w-2xl">${instruction}</p>
+                    
+                    <div class="w-full max-w-5xl zen-panel p-14 rounded-[3rem]" id="match-board">
+                        <div class="grid grid-cols-2 gap-x-20 gap-y-6 w-full">
+                            <div class="flex flex-col gap-6" id="match-left">${buildNodes(lefts)}</div>
+                            <div class="flex flex-col gap-6" id="match-right">${buildNodes(rights)}</div>
+                        </div>
+                    </div>
+                    <div id="match-hub" class="hidden mt-12 text-[var(--bg-base)] font-bold text-sm bg-[var(--accent-teal)] px-8 py-4 rounded-full font-mono-ui uppercase tracking-[0.2em] shadow-[0_0_20px_rgba(20,184,166,0.4)]"><i class="fas fa-check-circle mr-2 text-lg"></i> Matched correctly!</div>
+                </div>
+            `);
+        }
+
+        const bRedacted = (id, title, instruction, text, expected) => {
+            let expCopy = [...expected]; 
+            let htmlText = text.replace(/\[(.*?)\]/g, () => {
+                const ans = expCopy.shift();
+                return `<input type="text" class="gap-input" data-ans="${esc(ans)}" oninput="checkGap(this)" autocomplete="off">`;
+            });
+
+            return step(title, `
+                <div class="max-w-5xl mx-auto w-full flex flex-col items-center py-14 animate-in fade-in min-h-[60vh] justify-center">
+                    <p class="text-[11px] font-bold text-[var(--accent-teal)] uppercase tracking-[0.3em] mb-6 font-mono-ui bg-black/40 px-6 py-2.5 rounded-full border border-[rgba(20,184,166,0.3)] shadow-md"><i class="fas fa-pen-nib mr-2"></i> Journal Entry</p>
+                    <h2 class="font-serif-ui text-4xl md:text-5xl font-bold text-white mb-8 text-center drop-shadow-md uppercase tracking-tight">${title}</h2>
+                    <p class="text-[var(--text-muted)] font-light text-xl mb-14 text-center max-w-2xl">${instruction}</p>
+                    
+                    <div class="w-full max-w-4xl zen-panel p-20 text-4xl leading-loose font-serif-ui font-light text-center relative rounded-[3rem] shadow-[0_20px_50px_rgba(0,0,0,0.5)] border-t-2 border-[var(--accent-teal)]" id="gap-container-${id}">
+                        ${htmlText}
+                        <div class="absolute bottom-6 right-8 text-[11px] font-mono-ui text-[var(--text-muted)] opacity-50 uppercase tracking-widest font-bold">Type to fill data</div>
+                    </div>
+                    <div id="gap-fb-${id}" class="hidden mt-12 text-[var(--bg-base)] font-bold text-sm bg-[var(--accent-teal)] px-8 py-4 rounded-full font-mono-ui uppercase tracking-[0.2em] shadow-[0_0_20px_rgba(20,184,166,0.4)]"><i class="fas fa-check mr-2 text-lg"></i> Entry complete!</div>
+                </div>
+            `);
+        }
+
+        const bWordBuilder = (id, title, instruction, expectedArr) => {
+            const expectedStr = JSON.stringify(expectedArr).replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+            let wordBtns = shuffleArray([...expectedArr]).map(w => `<span class="build-pill" onclick="moveTypeWord(this, '${esc(w)}', '${id}')">${w}</span>`).join('');
+            return step(title, `
+                <div class="max-w-6xl mx-auto w-full flex flex-col items-center py-12 animate-in fade-in" data-expected="${expectedStr}" id="wb-data-${id}">
+                    <p class="text-[11px] font-bold text-[var(--accent-teal)] uppercase tracking-[0.3em] mb-6 font-mono-ui bg-black/40 border border-[rgba(20,184,166,0.3)] px-6 py-2.5 rounded-full shadow-md"><i class="fas fa-hammer mr-2"></i> Sentence Builder</p>
+                    <h2 class="font-serif-ui text-4xl md:text-5xl font-bold text-white mb-6 text-center drop-shadow-md uppercase tracking-tight">${title}</h2>
+                    <p class="text-[var(--text-muted)] font-light text-xl mb-14 text-center max-w-2xl">${instruction}</p>
+                    
+                    <div class="w-full max-w-4xl zen-panel text-center pb-12 pt-10 px-10 rounded-[3rem] shadow-[0_20px_50px_rgba(0,0,0,0.5)]">
+                        <div id="wb-dropzone-${id}" class="min-h-[160px] bg-black/40 border-2 border-dashed border-[var(--border-soft)] flex flex-wrap gap-5 items-center justify-center p-10 mb-12 rounded-2xl transition-all shadow-inner"></div>
+                        <div class="flex justify-center flex-wrap gap-5 w-full px-4" id="wb-bank-${id}">
+                            ${wordBtns}
+                        </div>
+                        <div class="mt-14 flex justify-between items-center px-6">
+                            <button onclick="resetWb('${id}')" class="text-xs font-bold text-[var(--text-muted)] hover:text-white uppercase tracking-[0.2em] transition font-mono-ui bg-white/5 border border-white/10 px-8 py-3 rounded-full hover:bg-white/10"><i class="fas fa-undo mr-2"></i> Reset</button>
+                            <button id="wb-fb-${id}" class="hidden text-xs font-bold text-[var(--bg-base)] bg-[var(--accent-teal)] uppercase tracking-[0.2em] transition font-mono-ui px-8 py-3 rounded-full shadow-[0_0_15px_rgba(20,184,166,0.4)] pointer-events-none"><i class="fas fa-check mr-2"></i> Built</button>
+                        </div>
+                    </div>
+                </div>
+            `);
+        }
+
+        const bRoleplay = (title, instruction, prompts) => step(title, `
+            <div class="max-w-6xl mx-auto flex flex-col items-center py-12 animate-in fade-in w-full">
+                <p class="text-[11px] font-bold text-[var(--accent-lavender)] uppercase tracking-[0.3em] mb-6 font-mono-ui bg-black/40 border border-[rgba(168,85,247,0.3)] px-6 py-2.5 rounded-full shadow-md"><i class="fas fa-microphone mr-2"></i> Communication</p>
+                <h2 class="font-serif-ui text-4xl md:text-5xl font-bold text-white mb-6 text-center drop-shadow-md uppercase tracking-tight">${title}</h2>
+                <p class="text-[var(--text-muted)] text-xl font-light mb-14 text-center max-w-3xl">${instruction}</p>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-10 w-full max-w-4xl">
+                    ${prompts.map((p, idx) => `
+                        <div class="flip-card w-full h-[320px]" onclick="this.classList.toggle('flipped')">
+                            <div class="flip-inner">
+                                <div class="flip-front rounded-3xl p-10 border-t-4 border-[var(--accent-lavender)]">
+                                    <i class="fas fa-comments text-6xl text-[var(--accent-lavender)] mb-8 opacity-60"></i>
+                                    <p class="font-serif-ui text-white text-3xl font-bold mb-4">Scenario ${idx + 1}</p>
+                                    <p class="text-[10px] text-[var(--text-muted)] mt-auto font-mono-ui uppercase tracking-[0.2em] font-bold">Click to Read</p>
+                                </div>
+                                <div class="flip-back rounded-3xl p-10 flex items-center justify-center border-b-4 border-[var(--accent-teal)]">
+                                    <p class="text-3xl font-light text-white leading-relaxed italic font-serif-ui">"${p}"</p>
+                                </div>
+                            </div>
+                        </div>
+                    `).join('')}
+                </div>
+            </div>
+        `);
+
+        const bGPTSimulator = (id, title, instruction, initialMsg, answer) => step(title, `
+            <div class="max-w-5xl mx-auto flex flex-col items-center py-12 animate-in fade-in min-h-[60vh] justify-center">
+                <p class="text-[11px] font-bold text-[var(--accent-teal)] uppercase tracking-[0.3em] mb-6 font-mono-ui bg-black/40 border border-[rgba(20,184,166,0.3)] px-6 py-2.5 rounded-full shadow-md"><i class="fas fa-mobile-alt mr-2"></i> Chat Support</p>
+                <h2 class="font-serif-ui text-4xl md:text-5xl font-bold text-white tracking-tight mb-6 text-center uppercase">${title}</h2>
+                <p class="text-[var(--text-muted)] text-xl font-light mb-12 text-center max-w-2xl">${instruction}</p>
+                
+                <div class="chat-container rounded-[2rem] p-10" id="ai-chat-box-${id}">
+                    <div class="chat-msg ai">${initialMsg}</div>
+                </div>
+
+                <button class="btn-zen px-16 py-5 mt-10 w-full max-w-md text-lg rounded-full shadow-[0_0_30px_rgba(20,184,166,0.2)]" id="prompt-btn-${id}" onclick="promptAI('${id}', '${esc(answer)}')">Send Advice</button>
+
+                <div class="hidden w-full max-w-4xl mt-14 bg-black/50 border-l-4 border-[var(--accent-lavender)] p-10 rounded-2xl shadow-2xl backdrop-blur-md" id="ai-followup-${id}">
+                    <p class="text-[11px] font-bold text-[var(--accent-lavender)] uppercase tracking-[0.3em] mb-5 font-mono-ui"><i class="fas fa-comment-dots mr-2"></i> Coach Query</p>
+                    <p class="text-2xl font-medium text-white leading-snug font-ui mb-6">"What other advice would you give to a stressed friend?"</p>
+                    <div class="bg-black/60 p-6 rounded-xl border border-[var(--border-soft)]">
+                        <p class="text-xl font-light text-[var(--text-main)] font-serif-ui italic">"If I were you, I would..."</p>
+                    </div>
+                </div>
+            </div>
+        `);
+
+        const bDebate = (title, statement, starter) => step(title, `
+            <div class="max-w-5xl mx-auto flex flex-col items-center py-12 animate-in fade-in w-full min-h-[60vh] justify-center">
+                <p class="text-[11px] font-bold text-[var(--accent-lavender)] uppercase tracking-[0.3em] mb-6 font-mono-ui bg-black/40 border border-[rgba(168,85,247,0.3)] px-6 py-2.5 rounded-full shadow-md"><i class="fas fa-brain mr-2"></i> Reflection</p>
+                <h2 class="font-serif-ui text-4xl md:text-5xl font-bold text-white mb-6 text-center drop-shadow-md uppercase tracking-tight">${title}</h2>
+                <p class="text-[var(--text-muted)] text-xl font-light mb-14 text-center max-w-2xl">Discuss with your coach.</p>
+                
+                <div class="w-full max-w-4xl zen-panel p-16 text-center rounded-[3rem] shadow-2xl border-t-2 border-[var(--accent-lavender)]">
+                    <p class="text-5xl font-serif-ui text-white font-bold mb-16 leading-tight">"${statement}"</p>
+                    <div class="flex gap-8 justify-center mb-14">
+                        <button class="px-10 py-4 bg-transparent border-2 border-[var(--accent-teal)] text-[var(--accent-teal)] rounded-full font-bold hover:bg-[var(--accent-teal)] hover:text-black transition-all uppercase tracking-[0.2em] font-mono-ui text-sm shadow-[0_0_15px_rgba(20,184,166,0.1)]" onclick="shootConfetti()">I AGREE</button>
+                        <button class="px-10 py-4 bg-transparent border-2 border-[var(--accent-rose)] text-[var(--accent-rose)] rounded-full font-bold hover:bg-[var(--accent-rose)] hover:text-white transition-all uppercase tracking-[0.2em] font-mono-ui text-sm shadow-[0_0_15px_rgba(244,63,94,0.1)]" onclick="shootConfetti()">I DISAGREE</button>
+                    </div>
+                    <div class="bg-black/40 p-8 rounded-2xl border border-[var(--border-soft)] inline-block w-full max-w-2xl shadow-inner">
+                        <p class="text-[10px] text-[var(--accent-lavender)] font-bold uppercase tracking-[0.3em] mb-3 font-mono-ui">Speak Out Loud</p>
+                        <p class="text-2xl text-[var(--text-main)] font-light italic font-serif-ui">"${starter} . . ."</p>
+                    </div>
+                </div>
+            </div>
+        `);
+
+        const bProfileBuilder = () => step("Transition Plan", `
+            <div class="max-w-5xl mx-auto w-full flex flex-col items-center py-12 animate-in fade-in min-h-[60vh] justify-center">
+                <p class="text-[11px] font-bold text-[var(--accent-teal)] uppercase tracking-[0.3em] mb-6 font-mono-ui bg-black/40 border border-[rgba(20,184,166,0.3)] px-6 py-2.5 rounded-full shadow-md"><i class="fas fa-flag-checkered mr-2"></i> Final Project</p>
+                <h2 class="font-serif-ui text-4xl md:text-5xl font-bold text-white mb-6 text-center drop-shadow-md uppercase tracking-tight">My Transition Plan</h2>
+                <p class="text-[var(--text-muted)] font-light text-xl mb-14 text-center max-w-2xl">Fill the form to reflect on a past change and your coping mechanisms.</p>
+                
+                <div class="w-full max-w-2xl zen-panel p-14 rounded-[3rem] shadow-2xl" id="profile-form">
+                    <p class="text-white font-bold mb-4 font-serif-ui text-xl opacity-90">When I was younger, I used to...</p>
+                    <input type="text" id="p-usedto" class="profile-input" placeholder="(e.g. live in another city)">
+                    <p class="text-white font-bold mt-8 mb-4 font-serif-ui text-xl opacity-90">When I feel stressed, I should...</p>
+                    <input type="text" id="p-should" class="profile-input" placeholder="(e.g. talk to a friend)">
+                    <button onclick="generateProfile()" class="btn-zen w-full mt-10 rounded-xl py-5 text-lg">Create Plan</button>
+                </div>
+
+                <div id="profile-result" class="hidden w-full max-w-3xl mt-10">
+                    <div class="zen-card-res rounded-[3rem] p-16 shadow-[0_30px_60px_rgba(0,0,0,0.8)] border-t-4 border-[var(--accent-teal)]">
+                        <div class="flex items-center gap-8 mb-10 border-b border-[var(--border-soft)] pb-10">
+                            <div class="w-24 h-24 bg-black/50 rounded-full border border-[var(--accent-teal)] flex items-center justify-center shadow-[0_0_30px_rgba(20,184,166,0.3)]"><i class="fas fa-leaf text-4xl text-[var(--accent-teal)]"></i></div>
+                            <div>
+                                <h3 class="text-4xl font-serif-ui font-bold text-white mb-2 tracking-tight">My Wellness Plan</h3>
+                                <p class="text-[var(--accent-teal)] font-mono-ui text-xs tracking-[0.3em] uppercase opacity-80 font-bold">WOLF LABS AGENT</p>
+                            </div>
+                        </div>
+                        <div class="space-y-8 pl-4">
+                            <p class="text-2xl font-light text-[var(--text-main)] font-serif-ui leading-relaxed">When I was younger, <span class="font-bold text-[var(--accent-sand)] bg-black/40 px-3 py-1 rounded-lg border border-[var(--accent-sand)]/30">I used to</span> <span id="res-usedto" class="italic">_</span>.</p>
+                            <p class="text-2xl font-light text-[var(--text-main)] font-serif-ui leading-relaxed">To deal with stress, <span class="font-bold text-[var(--accent-sand)] bg-black/40 px-3 py-1 rounded-lg border border-[var(--accent-sand)]/30">I should</span> <span id="res-should" class="italic">_</span>.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `);
+
+        const bMultipleChoice = (id, title, instruction, optA, optB, correctOpt) => step(title, `
+            <div class="max-w-4xl mx-auto flex flex-col items-center justify-center min-h-[60vh] text-center space-y-12 animate-in fade-in w-full py-12">
+                <p class="text-[11px] font-bold text-[var(--accent-teal)] uppercase tracking-[0.3em] font-mono-ui bg-black/40 border border-[rgba(20,184,166,0.3)] px-6 py-2.5 rounded-full shadow-md"><i class="fas fa-check-circle mr-2"></i> Comprehension Check</p>
+                <h2 class="font-serif-ui text-4xl md:text-5xl font-bold text-white drop-shadow-md tracking-tight uppercase">${title}</h2>
+                <p class="text-xl font-light text-[var(--text-muted)] max-w-2xl">${instruction}</p>
+                
+                <div class="w-full max-w-3xl grid grid-cols-1 md:grid-cols-2 gap-8 mt-8" id="mc-group-${id}">
+                    <button class="p-10 bg-[var(--bg-panel)] border border-[var(--border-soft)] rounded-[2rem] text-2xl font-semibold text-[var(--text-main)] hover:bg-[var(--bg-base)] transition-all cursor-pointer shadow-lg font-nunito leading-snug" onclick="selectMC(this, '${id}', '${esc(optA)}', '${esc(correctOpt)}')">${optA}</button>
+                    <button class="p-10 bg-[var(--bg-panel)] border border-[var(--border-soft)] rounded-[2rem] text-2xl font-semibold text-[var(--text-main)] hover:bg-[var(--bg-base)] transition-all cursor-pointer shadow-lg font-nunito leading-snug" onclick="selectMC(this, '${id}', '${esc(optB)}', '${esc(correctOpt)}')">${optB}</button>
+                </div>
+                
+                <div id="mc-fb-${id}" class="hidden mt-12 text-[var(--bg-base)] font-bold text-sm bg-[var(--accent-teal)] px-8 py-4 rounded-full font-mono-ui uppercase tracking-[0.2em] shadow-[0_0_20px_rgba(20,184,166,0.4)]"><i class="fas fa-check mr-2 text-lg"></i> Correct Answer!</div>
+            </div>
+        `);
+
+        const bWrap = () => step("Mission Complete", `
+            <div class="text-center max-w-4xl mx-auto flex flex-col items-center justify-center min-h-[70vh] animate-in fade-in py-12">
+                <div class="w-40 h-40 bg-black/40 rounded-full border-2 border-[var(--accent-teal)] flex items-center justify-center mb-10 shadow-[0_0_50px_rgba(20,184,166,0.3)] backdrop-blur-md">
+                    <i class="fas fa-seedling text-6xl text-[var(--accent-teal)] drop-shadow-[0_0_15px_rgba(20,184,166,0.5)]"></i>
+                </div>
+                <h1 class="font-serif-ui text-6xl md:text-8xl font-black text-transparent bg-clip-text bg-gradient-to-r from-teal-200 to-teal-500 tracking-tighter mb-8 uppercase drop-shadow-lg" style="filter: drop-shadow(0 4px 20px rgba(20,184,166,0.3));">Mind <br>Clear</h1>
+                <p class="text-2xl text-[var(--text-muted)] mb-14 font-light max-w-2xl mx-auto leading-relaxed">You finished Zenith: Dealing with Change. You learned to talk about past habits with <strong class="text-white font-bold bg-black/30 px-2 py-1 rounded border border-[var(--border-soft)]">"Used to"</strong> and give advice.</p>
+                <button onclick="goHome()" class="btn-zen text-xl px-14 py-5 shadow-[0_10px_40px_rgba(20,184,166,0.4)] rounded-full">
+                    Return to Dashboard
+                </button>
+            </div>
+        `);
+
+        // --- LESSON DATA (Exactly 25 Pages for B1 flow) ---
+        const lessonData = [
+            /* 1 */ bGuide("Zenith Protocol", "Dealing with Life Transitions", ["Level: B1 Intermediate.", "Topic: Mental Health & Coping.", "Grammar: 'Used To' & Modals of Advice.", "Vocabulary: Stress, Hobbies, Communication."]),
+            /* 2 */ bSlider("Mood Tracker", "How stressed do you feel about changes in life?", "Very Calm", "Very Stressed", "Why do you feel this way?", "I feel this way because..."),
+            /* 3 */ bVocabDrag("vd1", "Coping Mechanisms", "Drag the hobby to its definition.", [
+                {word: "Painting", def: "Using a brush and colors to create art on a canvas."},
+                {word: "Exercising", def: "Moving your body to stay healthy and fit."},
+                {word: "Talking", def: "Having a conversation with a friend about your feelings."},
+                {word: "Isolating", def: "Staying away from other people (not always healthy)."}
+            ], "What is your favorite creative outlet?"),
+            /* 4 */ bVideo("Life Changes", "Watch Part 1. What changes do the teens mention?", "sl7-4cSgLZo", 0, 60),
+            /* 5 */ bFlipCards("Vocabulary", "Click to learn words from the video.", [
+                {title: "Stressful", name: "Stressful", desc: "Making you feel worried and anxious.", icon: "fa-bolt"},
+                {title: "Transition", name: "Transition", desc: "A change from one state or condition to another.", icon: "fa-exchange-alt"},
+                {title: "Nerve-racking", name: "Nerve-racking", desc: "Causing stress or anxiety because it is difficult.", icon: "fa-heartbeat"}
+            ], "Have you been through a transition recently?"),
+            /* 6 */ bTagAssign("tag1", "Empathy Scan", "Read the teen's situation and click the correct emotion tag.", "I moved from Egypt to England. Coming from another country was really hard...", ["Excited", "Stressed", "Bored"], "Stressed", "Have you ever moved to a new city?"),
+            /* 7 */ bGrammar("Past Habits", "Used To", "Used to + Verb (base form)", ["[I used to] live in London.", "[He used to] know all the teachers.", "We use it for things that were true in the past, but not now."]),
+            /* 8 */ bTuner("tun1", "The Editor", "Fix the grammar mistake.", "I [use to] live in Egypt.", "I [used to] live in Egypt.", "Rule: Use 'used' (with a 'd') for past habits."),
+            /* 9 */ bLogicGate("Sentence Halves", "Match the past habit to the present reality.", [
+                {left: "I used to be shy...", right: "...but now I talk to everyone."}, {left: "I used to hate vegetables...", right: "...but now I love broccoli."}, {left: "I used to live in Egypt...", right: "...but now I live in England."}
+            ]),
+            /* 10 */ bRedacted("red1", "Journal Entry", "Type the missing words: 'used', 'stressful'.", "I [used] to live in a small town. Moving was very [stressful].", ["used", "stressful"]),
+            /* 11 */ bVideo("Coping Mechanisms", "Watch Part 2. How do they deal with stress?", "sl7-4cSgLZo", 60, 115),
+            /* 12 */ bBucketSort("bs1", "Mindful Sorting", "Sort the actions.", [
+                {word: "Painting", target: "GOOD"}, {word: "Taking deep breaths", target: "GOOD"}, {word: "Isolating yourself", target: "BAD"}, 
+                {word: "Finding a hobby", target: "GOOD"}, {word: "Worrying too much", target: "BAD"}
+            ], ["GOOD", "BAD"]),
+            /* 13 */ bGrammar("Giving Advice", "Should / Ought to / If I were you", "Modal + Verb", ["[You should] talk to a friend.", "[You ought to] take a breath.", "[If I were you], I would find a hobby."]),
+            /* 14 */ bTagAssign("tag2", "Advice Protocol", "Read the problem and click the best advice tag.", "I have a big exam tomorrow and I am panicking. What should I do?", ["YouShouldSleep", "YouShouldPanic", "YouOughtToCry"], "YouShouldSleep", "What advice do you give to a friend who is nervous?"),
+            /* 15 */ bTuner("tun2", "The Editor", "Fix the grammar mistake.", "You should [to talk] to someone.", "You should [talk] to someone.", "Rule: Do not use 'to' after 'should'."),
+            /* 16 */ bVocabDrag("vd2", "Advice Vocab", "Drag the word to its definition.", [
+                {word: "Vent", def: "To express a negative emotion in a strong way."},
+                {word: "Counselor", def: "A professional who gives advice on personal problems."},
+                {word: "Perspective", def: "A way of thinking about or understanding something."},
+                {word: "Relieve", def: "To make pain or stress less severe."}
+            ], "Do you like to vent when you are stressed?"),
+            /* 17 */ bVideo("Supporting Others", "Watch Part 3. How can we help friends?", "sl7-4cSgLZo", 115, 186),
+            /* 18 */ bMultipleChoice("mc1", "Comprehension Check", "What is the best way to support a friend?", "Tell them what to do", "Just be there to listen", "Just be there to listen"),
+            /* 19 */ bLogicGate("Match Advice", "Match the problem to the advice.", [
+                {left: "I am stressed.", right: "You should take deep breaths."}, {left: "I feel lonely.", right: "Why don't you join a club?"}, {left: "I am nervous about moving.", right: "If I were you, I would talk to a friend."}
+            ]),
+            /* 20 */ bGPTSimulator("gpt1", "Support Chat", "Your friend is stressed about a new school.", "Hey... I'm so stressed about moving to a new school. I don't know anyone there.", "You should join a club and talk to people."),
+            /* 21 */ bWordBuilder("wb1", "Sentence Builder", "Order the words.", ["You", "should", "talk", "to", "a", "counselor", "."]),
+            /* 22 */ bRoleplay("Roleplay", "Give advice to your teacher.", ["I am very stressed about my exams. What should I do?", "I used to have many friends, but I moved to a new city."]),
+            /* 23 */ bDebate("Reflection", "Change is always a good thing.", "I agree because... / I disagree because..."),
+            /* 24 */ bProfileBuilder(),
+            /* 25 */ bWrap()
+        ];
+
+        // --- RUNTIME LOGIC ---
+        function updateHUD() {
+            const h = document.getElementById('hp-bar'); if(h) h.style.width = Math.max(0, state.hp) + '%';
+            const x = document.getElementById('xp-bar'); if(x) x.style.width = Math.min(100, (state.xp / 120) * 100) + '%';
+            const sCount = document.getElementById('console-counter'); if(sCount) sCount.innerText = `MODULE ${String(state.current + 1).padStart(2, '0')}/${lessonData.length}`;
+        }
+
+        function startMission() {
+            document.getElementById('dashboard').classList.add('hidden'); document.getElementById('dashboard').classList.remove('flex');
+            document.getElementById('hud-top').classList.remove('hidden'); document.getElementById('hud-top').classList.add('flex');
+            document.getElementById('mission-arena').classList.remove('hidden'); document.getElementById('mission-arena').classList.add('flex');
+            document.getElementById('nav-console').classList.remove('hidden'); document.getElementById('nav-console').classList.add('flex');
+            renderStep();
+        }
+        function goHome() {
+            document.getElementById('dashboard').classList.remove('hidden'); document.getElementById('dashboard').classList.add('flex');
+            document.getElementById('hud-top').classList.add('hidden'); document.getElementById('hud-top').classList.remove('flex');
+            document.getElementById('mission-arena').classList.add('hidden'); document.getElementById('mission-arena').classList.remove('flex');
+            document.getElementById('nav-console').classList.add('hidden'); document.getElementById('nav-console').classList.remove('flex');
+            state.current = 0; state.hp = 100; state.xp = 0; updateHUD();
+        }
+        function toggleFullscreen() { if (!document.fullscreenElement) { document.documentElement.requestFullscreen().catch(err => console.log(err)); } else { if (document.exitFullscreen) document.exitFullscreen(); } }
+        function toggleTeacherHUD() { document.getElementById('teacher-hud').classList.toggle('active'); document.getElementById('whiteboard').classList.remove('active'); }
+        function toggleWhiteboard() { document.getElementById('whiteboard').classList.toggle('active'); document.getElementById('teacher-hud').classList.remove('active'); }
+
+        function renderStep() {
+            if (!lessonData[state.current]) return;
+            const step = lessonData[state.current];
+            const content = document.getElementById('mission-content'); 
+            if(content) content.innerHTML = `<div class="w-full max-w-7xl mx-auto">${step.html}</div>`;
+            updateHUD();
+            document.getElementById('mission-arena').scrollTo(0,0);
+            if (step.title === "Sentence Builder") setTimeout(setupWb, 50);
+        }
+
+        function nextStep() { if (state.current < lessonData.length - 1) { state.current++; renderStep(); } else if(state.current === lessonData.length - 1) { goHome(); } }
+        function prevStep() { if (state.current > 0) { state.current--; renderStep(); } }
+
+        function triggerPraise(main, sub) {
+            document.getElementById('teacher-hud')?.classList.remove('active'); 
+            const overlay = document.getElementById('praise-overlay'); const card = document.getElementById('praise-card');
+            document.getElementById('praise-main').innerText = main; document.getElementById('praise-sub').innerText = sub;
+            
+            if(main === 'MINDFUL GRAMMAR') {
+                document.getElementById('praise-icon').className = "fas fa-leaf text-7xl text-[var(--accent-teal)]";
+                card.classList.replace('border-[var(--accent-lavender)]', 'border-[var(--accent-teal)]');
+                card.querySelector('.rounded-full').style.borderColor = "var(--accent-teal)";
+                card.querySelector('.rounded-full').style.boxShadow = "0 0 50px rgba(20,184,166,0.4)";
+                document.getElementById('praise-sub').style.color = "var(--accent-teal)";
+            } else {
+                document.getElementById('praise-icon').className = "fas fa-spa text-7xl text-[var(--accent-lavender)]";
+                card.classList.replace('border-[var(--accent-teal)]', 'border-[var(--accent-lavender)]');
+                card.querySelector('.rounded-full').style.borderColor = "var(--accent-lavender)";
+                card.querySelector('.rounded-full').style.boxShadow = "0 0 50px rgba(168,85,247,0.4)";
+                document.getElementById('praise-sub').style.color = "var(--accent-lavender)";
+            }
+
+            overlay.classList.remove('opacity-0', 'pointer-events-none');
+            setTimeout(() => card.classList.replace('scale-50', 'scale-100'), 50); 
+            shootConfetti();
+            setTimeout(() => { card.classList.replace('scale-100', 'scale-50'); overlay.classList.add('opacity-0', 'pointer-events-none'); }, 2500);
+        }
+
+        function shootConfetti() {
+            const cCanvas = document.getElementById('confetti-canvas'); 
+            if (!cCanvas) return;
+            const cCtx = cCanvas.getContext('2d');
+            cCanvas.width = window.innerWidth; cCanvas.height = window.innerHeight;
+            const pieces = []; const colors = ['#14b8a6', '#a855f7', '#fde047', '#f8fafc']; 
+            for(let i=0; i<60; i++) pieces.push({ x: cCanvas.width/2, y: cCanvas.height/2+50, vx: (Math.random()-0.5)*20, vy: (Math.random()-1)*20-5, size: Math.random()*6+4, color: colors[Math.floor(Math.random()*colors.length)], rot: Math.random()*360, rotSpeed: (Math.random()-0.5)*10 });
+            function animateC() {
+                cCtx.clearRect(0, 0, cCanvas.width, cCanvas.height); let active = false;
+                pieces.forEach(p => {
+                    p.x += p.vx; p.y += p.vy; p.vy += 0.5; p.rot += p.rotSpeed; if(p.y < cCanvas.height) active = true;
+                    cCtx.save(); cCtx.translate(p.x, p.y); cCtx.rotate(p.rot*Math.PI/180); cCtx.fillStyle = p.color; 
+                    cCtx.shadowBlur = 10; cCtx.shadowColor = p.color;
+                    cCtx.fillRect(-p.size/2, -p.size/2, p.size, p.size); cCtx.restore();
+                });
+                if(active) requestAnimationFrame(animateC); else cCtx.clearRect(0, 0, cCanvas.width, cCanvas.height);
+            }
+            animateC();
+        }
+
+        // --- SPECIFIC MECHANICS ---
+
+        function selectChoice(el) {
+            document.querySelectorAll('.choice-card').forEach(c => c.classList.remove('selected'));
+            el.classList.add('selected');
+            document.getElementById('choice-fb').classList.remove('hidden');
+            state.xp += 5; updateHUD(); shootConfetti();
+        }
+
+        function selectMC(btn, id, selected, correct) {
+            const group = document.getElementById(`mc-group-${id}`);
+            if(group.classList.contains('locked')) return;
+            if(selected === correct) {
+                btn.classList.add('bg-[rgba(20,184,166,0.2)]', 'border-[var(--accent-teal)]', 'text-[var(--accent-teal)]');
+                document.getElementById(`mc-fb-${id}`).classList.remove('hidden');
+                group.classList.add('locked');
+                state.xp += 5; updateHUD(); shootConfetti();
+            } else {
+                btn.classList.add('shake', 'border-[var(--accent-rose)]', 'text-[var(--accent-rose)]');
+                state.hp -= 5; updateHUD();
+                setTimeout(() => { btn.classList.remove('shake', 'border-[var(--accent-rose)]', 'text-[var(--accent-rose)]'); }, 400);
+            }
+        }
+
+        // VOCAB DRAG (Definitions)
+        function dragDef(e, el) { e.dataTransfer.setData('text', el.dataset.word); el.classList.add('dragging'); }
+        function allowDropDef(e) { e.preventDefault(); e.currentTarget.classList.add('drag-over'); }
+        function leaveDropDef(e) { e.currentTarget.classList.remove('drag-over'); }
+        function dropDef(e, zone, id) { 
+            e.preventDefault(); zone.classList.remove('drag-over'); 
+            const word = e.dataTransfer.getData('text'); 
+            if(word) checkDefMatch(word, zone, id); 
+        }
+        function checkDefMatch(wordStr, zone, id) {
+            const expected = zone.dataset.expected;
+            if(zone.querySelector('.matched-word')) return;
+
+            if(wordStr === expected) {
+                const wordEl = document.querySelector(`.drag-word[data-word="${wordStr}"]`);
+                if(!wordEl) return;
+                
+                const dropArea = zone.querySelector('.def-drop-area'); dropArea.innerHTML = ''; 
+                wordEl.classList.remove('drag-word');
+                wordEl.className = 'matched-word bg-[var(--accent-teal)] text-[#000] w-full h-full m-0 shadow-[0_0_20px_rgba(20,184,166,0.4)] flex items-center justify-center font-bold font-nunito text-[1.2rem] rounded-xl border-none py-3 uppercase tracking-widest';
+                wordEl.draggable = false;
+                
+                dropArea.appendChild(wordEl); dropArea.classList.replace('bg-[rgba(0,0,0,0.4)]', 'bg-transparent'); dropArea.style.border = "none";
+                zone.classList.replace('border-dashed', 'border-solid');
+                zone.classList.replace('border-[var(--text-muted)]', 'border-[var(--accent-teal)]');
+                
+                state.xp += 5; updateHUD(); shootConfetti();
+                
+                const container = document.getElementById(`vdrag-container-${id}`);
+                if(container.querySelectorAll('.matched-word').length === container.querySelectorAll('.def-drop-zone').length) {
+                    container.querySelector(`#vdrag-fb-${id}`).classList.remove('hidden');
+                }
+            } else {
+                zone.classList.add('shake'); zone.style.borderColor = "var(--accent-rose)"; state.hp -= 5; updateHUD();
+                setTimeout(() => { zone.classList.remove('shake'); zone.style.borderColor = "var(--text-muted)"; }, 400);
+            }
+        }
+
+        // TAG ASSIGN
+        function selectTag(btn, id, selected, correct) {
+            const group = document.getElementById(`tag-group-${id}`);
+            if(group.classList.contains('locked')) return;
+
+            if(selected === correct) {
+                btn.classList.add('bg-[var(--accent-lavender)]', 'border-[var(--accent-lavender)]', 'text-white', 'shadow-[0_0_25px_rgba(168,85,247,0.5)]');
+                document.getElementById(`tag-fb-${id}`).classList.remove('hidden');
+                group.classList.add('locked');
+                state.xp += 5; updateHUD(); shootConfetti();
+            } else {
+                btn.classList.add('shake', 'bg-[var(--accent-rose)]', 'border-[var(--accent-rose)]', 'text-white');
+                state.hp -= 5; updateHUD();
+                setTimeout(() => { btn.classList.remove('shake', 'bg-[var(--accent-rose)]', 'border-[var(--accent-rose)]', 'text-white'); btn.classList.add('bg-[var(--bg-panel)]'); }, 400);
+            }
+        }
+
+        function dragBucket(e, el) { e.dataTransfer.setData('text', el.innerText.trim()); e.dataTransfer.setData('target', el.dataset.target); el.classList.add('dragging'); }
+        function allowDropBucket(e) { e.preventDefault(); e.currentTarget.classList.add('drag-over'); }
+        function leaveDropBucket(e) { e.currentTarget.classList.remove('drag-over'); }
+        function dropBucket(e, zone, id) {
+            e.preventDefault(); zone.classList.remove('drag-over');
+            const target = e.dataTransfer.getData('target');
+            const word = e.dataTransfer.getData('text');
+            const bucketName = zone.dataset.bucket;
+            if(target === bucketName) {
+                const bank = document.getElementById(`bucket-bank-${id}`);
+                const pill = Array.from(bank.children).find(c => c.innerText.trim() === word);
+                if(pill) {
+                    pill.classList.add('dropped');
+                    pill.draggable = false;
+                    zone.querySelector('.bucket-items').appendChild(pill);
+                    state.xp += 2; updateHUD();
+                    if(bank.children.length === 0) { document.getElementById(`bucket-fb-${id}`).classList.remove('hidden'); shootConfetti(); }
+                }
+            } else {
+                zone.classList.add('shake', 'border-[var(--accent-rose)]'); state.hp -= 5; updateHUD();
+                setTimeout(() => zone.classList.remove('shake', 'border-[var(--accent-rose)]'), 400);
+            }
+        }
+
+        function toggleTuner(id, wrong, right, rule) {
+            const track = document.getElementById(`tuner-track-${id}`);
+            const textEl = document.getElementById(`tuner-text-${id}`);
+            if(!track.classList.contains('active')) {
+                track.classList.add('active');
+                textEl.innerHTML = right.replace(/\[(.*?)\]/g, `<span class="text-[var(--accent-teal)] font-bold">$1</span>`); 
+                textEl.classList.replace('text-[var(--accent-rose)]', 'text-[var(--text-main)]');
+                document.getElementById(`mode-aff-${id}`).classList.replace('text-slate-500', 'text-slate-600');
+                document.getElementById(`mode-alt-${id}`).classList.replace('text-slate-500', 'text-[var(--accent-teal)]');
+                document.getElementById(`tuner-fb-${id}`).classList.remove('hidden');
+                state.xp += 5; updateHUD(); shootConfetti();
+            }
+        }
+
+        let activeMatch = null; let matchesMatched = 0;
+        function handleMatch(node) {
+            if (node.classList.contains('matched')) return;
+            if (!activeMatch) { activeMatch = node; node.classList.add('active'); } 
+            else {
+                if (activeMatch.dataset.type !== node.dataset.type && activeMatch.dataset.id === node.dataset.id) {
+                    activeMatch.classList.replace('active', 'matched'); node.classList.add('matched');
+                    activeMatch = null; matchesMatched++; state.xp += 5; updateHUD();
+                    if(matchesMatched === document.getElementById('match-board').children[0].children[0].children.length) { document.getElementById('match-hub').classList.remove('hidden'); shootConfetti(); matchesMatched = 0; }
+                } else {
+                    activeMatch.classList.remove('active'); activeMatch.classList.add('shake', 'border-[var(--accent-rose)]', 'text-[var(--accent-rose)]'); 
+                    node.classList.add('shake', 'border-[var(--accent-rose)]', 'text-[var(--accent-rose)]'); state.hp -= 5; updateHUD();
+                    setTimeout(() => { 
+                        activeMatch.classList.remove('shake', 'border-[var(--accent-rose)]', 'text-[var(--accent-rose)]'); 
+                        node.classList.remove('shake', 'border-[var(--accent-rose)]', 'text-[var(--accent-rose)]'); activeMatch = null; 
+                    }, 400);
+                }
+            }
+        }
+
+        function checkGap(input) {
+            const ans = input.dataset.ans.toLowerCase();
+            const val = input.value.trim().toLowerCase();
+            if(val === ans) {
+                input.classList.remove('error'); input.classList.add('correct'); input.value = input.dataset.ans;
+                state.xp += 2; updateHUD();
+                const container = input.closest('.zen-panel');
+                const allDone = Array.from(container.querySelectorAll('.gap-input')).every(i => i.classList.contains('correct'));
+                if(allDone) { container.nextElementSibling.classList.remove('hidden'); shootConfetti(); }
+            } else if(val.length >= ans.length) {
+                input.classList.add('error'); state.hp -= 2; updateHUD();
+                setTimeout(() => { input.classList.remove('error'); input.value = ''; }, 400);
+            }
+        }
+
+        let wbState = {};
+        function setupWb() { document.querySelectorAll('[id^="wb-data-"]').forEach(el => { const id = el.id.replace('wb-data-', ''); wbState[id] = { current: [], expected: JSON.parse(el.getAttribute('data-expected')) }; }); }
+        function moveTypeWord(pill, word, id) {
+            if(pill.classList.contains('used') || !wbState[id]) return;
+            wbState[id].current.push(word); pill.classList.add('used');
+            const dz = document.getElementById(`wb-dropzone-${id}`);
+            const newPill = document.createElement('span'); 
+            newPill.className = 'font-nunito text-xl text-[var(--bg-base)] font-bold bg-[var(--accent-teal)] px-6 py-3 rounded-xl shadow-[0_0_15px_rgba(20,184,166,0.4)]'; 
+            newPill.innerText = word; dz.appendChild(newPill);
+            
+            if(wbState[id].current.length === wbState[id].expected.length) {
+                if(wbState[id].current.every((val, index) => val === wbState[id].expected[index])) { 
+                    dz.classList.add('border-[var(--accent-teal)]', 'bg-[rgba(20,184,166,0.1)]');
+                    document.getElementById(`wb-fb-${id}`).classList.remove('hidden'); state.xp += 5; updateHUD(); shootConfetti(); 
+                } else { 
+                    dz.classList.add('shake', 'border-[var(--accent-rose)]'); state.hp -= 5; updateHUD();
+                    setTimeout(() => dz.classList.remove('shake', 'border-[var(--accent-rose)]'), 400); 
+                }
+            }
+        }
+        function resetWb(id) {
+            if(!wbState[id]) return; wbState[id].current = []; 
+            const dz = document.getElementById(`wb-dropzone-${id}`); dz.innerHTML = ''; dz.classList.remove('border-[var(--accent-teal)]', 'bg-[rgba(20,184,166,0.1)]');
+            document.getElementById(`wb-fb-${id}`).classList.add('hidden');
+            document.getElementById(`wb-bank-${id}`).querySelectorAll('.build-pill').forEach(p => p.classList.remove('used'));
+        }
+
+        let gptPrompted = false;
+        function promptAI(id, ans) {
+            if (gptPrompted) return;
+            gptPrompted = true;
+            const btn = document.getElementById(`prompt-btn-${id}`);
+            btn.style.display = 'none';
+
+            const chat = document.getElementById(`ai-chat-box-${id}`);
+            chat.innerHTML += `<div class="chat-msg user">${ans}</div>`;
+            chat.scrollTop = chat.scrollHeight;
+
+            setTimeout(() => {
+                const msgId = 'ai-msg-' + Date.now();
+                chat.innerHTML += `<div class="chat-msg ai" id="${msgId}"><div class="typing-indicator"><div class="typing-dot"></div><div class="typing-dot"></div></div></div>`;
+                chat.scrollTop = chat.scrollHeight;
+                
+                setTimeout(() => {
+                    document.getElementById(msgId).innerHTML = `Thanks. I think I'll try to find a club and just talk to people. It's hard, but I'll try.`;
+                    chat.scrollTop = chat.scrollHeight;
+                    setTimeout(() => {
+                        document.getElementById(`ai-followup-${id}`).classList.remove('hidden');
+                        state.xp += 5; updateHUD(); shootConfetti();
+                    }, 1000);
+                }, 1500);
+            }, 500);
+        }
+
+        function generateProfile() {
+            const usedto = document.getElementById('p-usedto').value;
+            const should = document.getElementById('p-should').value;
+            
+            if(!usedto || !should) {
+                document.getElementById('profile-form').classList.add('shake', 'border-[var(--accent-rose)]');
+                setTimeout(() => document.getElementById('profile-form').classList.remove('shake', 'border-[var(--accent-rose)]'), 400);
+                return;
+            }
+
+            document.getElementById('res-usedto').innerText = usedto;
+            document.getElementById('res-should').innerText = should;
+
+            document.getElementById('profile-form').classList.add('hidden');
+            document.getElementById('profile-result').classList.remove('hidden');
+            document.getElementById('profile-result').classList.add('animate-in', 'fade-in');
+            
+            state.xp += 10; updateHUD(); shootConfetti();
+        }
+        
+        window.onload = () => { updateHUD(); goHome(); };
+    </script>
+</body>
+</html>
